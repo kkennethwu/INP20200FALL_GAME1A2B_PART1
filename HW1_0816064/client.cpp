@@ -19,18 +19,17 @@ int main(){
     if (sock < 0){
         printf("\n Socket creation error \n");
         return -1;
-    }
+    }    //
+    struct sockaddr_in caddr;
+    caddr.sin_family = AF_INET;
+    caddr.sin_port = htons(PORT);
     //
-    struct sockaddr_in saddr;
-    saddr.sin_family = AF_INET;
-    saddr.sin_port = htons(PORT);
-    //
-    if(inet_pton(AF_INET, "127.0.0.1", &saddr.sin_addr) <= 0){
+    if(inet_pton(AF_INET, "127.0.0.1", &caddr.sin_addr) <= 0){
         printf("\nInvalid address/ Address not supported \n");
         return -1;
     }
     //
-    int client_fd = connect(sock, (struct sockaddr*) &saddr, sizeof(saddr));
+    int client_fd = connect(sock, (struct sockaddr*) &caddr, sizeof(caddr));
     if(client_fd < 0){
         printf("Connection Failed\n");
         return -1;
@@ -39,6 +38,7 @@ int main(){
     char const* hello = "Hello from client";
     send(sock, hello, strlen(hello), 0);
     printf("Hello message sent\n");
+    //
     long data_recv = read(sock, buffer, 1024);
     printf("%s\n", buffer);
     //

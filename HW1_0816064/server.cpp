@@ -33,17 +33,25 @@ int main(){
     saddr.sin_family = AF_INET;
     saddr.sin_addr.s_addr = INADDR_ANY;
     saddr.sin_port = htons(PORT);
-    
+    int saddrlen = sizeof(saddr);
     //bind
     bind(serverfd, (struct sockaddr*)&saddr, sizeof(saddr));
     //listen
     printf("Listening...\n");
     listen(serverfd, SOMAXCONN); // SOMAXCONN: mac connection number 128 define in socket.h
     //accept
-    int new_socket = accept(serverfd, (struct sockaddr*)&saddr, (socklen_t*) sizeof(saddr));
+    int new_socket = accept(serverfd, (struct sockaddr*)&saddr, (socklen_t*) &saddrlen);
+    if(new_socket < 0 ){
+        perror("new_socket");
+        exit(EXIT_FAILURE);
+    }
+    printf("Connected\n");
     //
+    sleep(2);
     long data_recv = read(new_socket, buffer, 1024);
+    std :: cout << data_recv << std :: endl;
     printf("%s\n", buffer);
+    //
     char const* hello = "Hello from server";
     send(new_socket, hello, strlen(hello), 0);
     printf("Hello message sent\n");
